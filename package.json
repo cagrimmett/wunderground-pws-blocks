@@ -1,0 +1,10 @@
+{
+    "name": "wundeground-pws-current-weather-block",
+    "scripts": {
+        "build": "parcel build blocks/current-weather.jsx --dist-dir blocks --public-url ."
+    },
+    "dependencies": {
+        "@wordpress/api-fetch": "^6.25.0",
+        "parcel": "^2.8.3"
+    }
+}
