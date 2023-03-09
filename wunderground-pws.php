@@ -73,7 +73,7 @@ function wu_pws_activate() {
 
 	// schedule cron hook
 	if ( ! wp_next_scheduled( 'wu_pws_daily_hook' ) ) {
-		wp_schedule_event( time(), 'daily', 'wu_pws_daily_hook' );
+		wp_schedule_event( time(), 'twicedaily', 'wu_pws_daily_hook' );
 	}
 	if ( ! wp_next_scheduled( 'wu_pws_current_hook' ) ) {
 		wp_schedule_event( time(), 'ten_minutes', 'wu_pws_current_hook' );
@@ -91,7 +91,8 @@ function add_cron_interval( $schedules ) {
 }
 
 function wu_pws_deactivate() {
-	wp_clear_scheduled_hook( 'wu_pws_hook' );
+	wp_clear_scheduled_hook( 'wu_pws_current_hook' );
+	wp_clear_scheduled_hook( 'wu_pws_daily_hook' );
 }
 register_deactivation_hook( __FILE__, 'wu_pws_deactivate' );
 
