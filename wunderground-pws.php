@@ -356,8 +356,8 @@ function wu_pws_settings_page() {
 				global $wpdb;
 				$table_name = $wpdb->prefix . 'wunderground_pws_daily';
 				$data       = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY observation_time DESC LIMIT 30" );
-			?>
-			<table style="min-width:2000px; border-color: black;">
+			if ( ! empty( $data )) { ?>
+				<table style="min-width:2000px; border-color: black;">
 				<tr>
 					<th>Date</th>
 					<th>Temp High</th>
@@ -430,6 +430,10 @@ function wu_pws_settings_page() {
 				?>
 						
 				</table>
+		<?php } else { ?>
+			<p>No historical data has been collected yet. Come back in 24 hours.</p>	
+		<?php } ?>
+			
 	  </div >
 
 	<?php
