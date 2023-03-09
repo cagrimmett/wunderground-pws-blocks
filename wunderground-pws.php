@@ -48,6 +48,12 @@ function wu_pws_activate() {
         pressureTrend decimal(5,2) DEFAULT '0.00' NOT NULL,
         precipRate decimal(5,2) DEFAULT '0.00' NOT NULL,
         precipTotal decimal(5,2) DEFAULT '0.00' NOT NULL,
+		winddirAvg decimal(5,2) DEFAULT '0.00' NOT NULL,
+		solarRadiationHigh decimal(5,2) DEFAULT '0.00' NOT NULL,
+		uvHigh decimal(5,2) DEFAULT '0.00' NOT NULL,
+		humidityHigh decimal(5,2) DEFAULT '0.00' NOT NULL,
+		humidityLow decimal(5,2) DEFAULT '0.00' NOT NULL,
+		humidityAvg decimal(5,2) DEFAULT '0.00' NOT NULL,
         PRIMARY KEY  (id)
     ) $charset_collate;";
 
@@ -178,30 +184,36 @@ function wu_pws_fetch_daily_summary() {
 		error_log( 'No observations found in API response' );
 		return;
 	}
-	$tempHigh         = $observations[0]['imperial']['tempHigh'];
-	$tempLow          = $observations[0]['imperial']['tempLow'];
-	$tempAvg          = $observations[0]['imperial']['tempAvg'];
-	$windspeedHigh    = $observations[0]['imperial']['windspeedHigh'];
-	$windspeedLow     = $observations[0]['imperial']['windspeedLow'];
-	$windspeedAvg     = $observations[0]['imperial']['windspeedAvg'];
-	$windgustHigh     = $observations[0]['imperial']['windgustHigh'];
-	$windgustLow      = $observations[0]['imperial']['windgustLow'];
-	$windgustAvg      = $observations[0]['imperial']['windgustAvg'];
-	$dewptHigh        = $observations[0]['imperial']['dewptHigh'];
-	$dewptLow         = $observations[0]['imperial']['dewptLow'];
-	$dewptAvg         = $observations[0]['imperial']['dewptAvg'];
-	$windchillHigh    = $observations[0]['imperial']['windchillHigh'];
-	$windchillLow     = $observations[0]['imperial']['windchillLow'];
-	$windchillAvg     = $observations[0]['imperial']['windchillAvg'];
-	$heatindexHigh    = $observations[0]['imperial']['heatindexHigh'];
-	$heatindexLow     = $observations[0]['imperial']['heatindexLow'];
-	$heatindexAvg     = $observations[0]['imperial']['heatindexAvg'];
-	$pressureMax      = $observations[0]['imperial']['pressureMax'];
-	$pressureMin      = $observations[0]['imperial']['pressureMin'];
-	$pressureTrend    = $observations[0]['imperial']['pressureTrend'];
-	$precipRate       = $observations[0]['imperial']['precipRate'];
-	$precipTotal      = $observations[0]['imperial']['precipTotal'];
-	$observation_time = $observations[0]['obsTimeLocal'];
+	$tempHigh           = $observations[0]['imperial']['tempHigh'];
+	$tempLow            = $observations[0]['imperial']['tempLow'];
+	$tempAvg            = $observations[0]['imperial']['tempAvg'];
+	$windspeedHigh      = $observations[0]['imperial']['windspeedHigh'];
+	$windspeedLow       = $observations[0]['imperial']['windspeedLow'];
+	$windspeedAvg       = $observations[0]['imperial']['windspeedAvg'];
+	$windgustHigh       = $observations[0]['imperial']['windgustHigh'];
+	$windgustLow        = $observations[0]['imperial']['windgustLow'];
+	$windgustAvg        = $observations[0]['imperial']['windgustAvg'];
+	$dewptHigh          = $observations[0]['imperial']['dewptHigh'];
+	$dewptLow           = $observations[0]['imperial']['dewptLow'];
+	$dewptAvg           = $observations[0]['imperial']['dewptAvg'];
+	$windchillHigh      = $observations[0]['imperial']['windchillHigh'];
+	$windchillLow       = $observations[0]['imperial']['windchillLow'];
+	$windchillAvg       = $observations[0]['imperial']['windchillAvg'];
+	$heatindexHigh      = $observations[0]['imperial']['heatindexHigh'];
+	$heatindexLow       = $observations[0]['imperial']['heatindexLow'];
+	$heatindexAvg       = $observations[0]['imperial']['heatindexAvg'];
+	$pressureMax        = $observations[0]['imperial']['pressureMax'];
+	$pressureMin        = $observations[0]['imperial']['pressureMin'];
+	$pressureTrend      = $observations[0]['imperial']['pressureTrend'];
+	$precipRate         = $observations[0]['imperial']['precipRate'];
+	$precipTotal        = $observations[0]['imperial']['precipTotal'];
+	$observation_time   = $observations[0]['obsTimeLocal'];
+	$winddirAvg         = $observations[0]['winddirAvg'];
+	$solarRadiationHigh = $observations[0]['solarRadiationHigh'];
+	$uvHigh             = $observations[0]['uvHigh'];
+	$humidityHigh       = $observations[0]['humidityHigh'];
+	$humidityLow        = $observations[0]['humidityLow'];
+	$humidityAvg        = $observations[0]['humidityAvg'];
 
 	// Insert the data into the database
 	global $wpdb;
@@ -216,30 +228,36 @@ function wu_pws_fetch_daily_summary() {
 	$wpdb->insert(
 		$table_name,
 		array(
-			'tempHigh'         => $tempHigh,
-			'tempLow'          => $tempLow,
-			'tempAvg'          => $tempAvg,
-			'windspeedHigh'    => $windspeedHigh,
-			'windspeedLow'     => $windspeedLow,
-			'windspeedAvg'     => $windspeedAvg,
-			'windgustHigh'     => $windgustHigh,
-			'windgustLow'      => $windgustLow,
-			'windgustAvg'      => $windgustAvg,
-			'dewptHigh'        => $dewptHigh,
-			'dewptLow'         => $dewptLow,
-			'dewptAvg'         => $dewptAvg,
-			'windchillHigh'    => $windchillHigh,
-			'windchillLow'     => $windchillLow,
-			'windchillAvg'     => $windchillAvg,
-			'heatindexHigh'    => $heatindexHigh,
-			'heatindexLow'     => $heatindexLow,
-			'heatindexAvg'     => $heatindexAvg,
-			'pressureMax'      => $pressureMax,
-			'pressureMin'      => $pressureMin,
-			'pressureTrend'    => $pressureTrend,
-			'precipRate'       => $precipRate,
-			'precipTotal'      => $precipTotal,
-			'observation_time' => $observation_time,
+			'tempHigh'           => $tempHigh,
+			'tempLow'            => $tempLow,
+			'tempAvg'            => $tempAvg,
+			'windspeedHigh'      => $windspeedHigh,
+			'windspeedLow'       => $windspeedLow,
+			'windspeedAvg'       => $windspeedAvg,
+			'windgustHigh'       => $windgustHigh,
+			'windgustLow'        => $windgustLow,
+			'windgustAvg'        => $windgustAvg,
+			'dewptHigh'          => $dewptHigh,
+			'dewptLow'           => $dewptLow,
+			'dewptAvg'           => $dewptAvg,
+			'windchillHigh'      => $windchillHigh,
+			'windchillLow'       => $windchillLow,
+			'windchillAvg'       => $windchillAvg,
+			'heatindexHigh'      => $heatindexHigh,
+			'heatindexLow'       => $heatindexLow,
+			'heatindexAvg'       => $heatindexAvg,
+			'pressureMax'        => $pressureMax,
+			'pressureMin'        => $pressureMin,
+			'pressureTrend'      => $pressureTrend,
+			'precipRate'         => $precipRate,
+			'precipTotal'        => $precipTotal,
+			'observation_time'   => $observation_time,
+			'winddirAvg'         => $winddirAvg,
+			'solarRadiationHigh' => $solarRadiationHigh,
+			'uvHigh'             => $uvHigh,
+			'humidityHigh'       => $humidityHigh,
+			'humidityLow'        => $humidityLow,
+			'humidityAvg'        => $humidityAvg,
 		)
 	);
 
@@ -318,6 +336,102 @@ function wu_pws_settings_page() {
 				<?php submit_button(); ?>
 			</form>
 		</div>
+
+		<div class="wrap">
+			<h2>Current Weather</h2>
+			<p>Use the block "Wunderground PWS Current Weather" to display your PWS's current weather conditions in any page or post.</p>
+			<?php if ( ! get_option( 'wu_pws_api_key' ) || ! get_option( 'wu_pws_station_id' ) ) { ?>
+				<p>Before using the block, you must enter your API key and station ID in the settings above.</p>
+			<?php } else { ?>
+				<p>Here is a preview of your current weather conditions:</p>
+				<?php
+				echo current_weather_block_render();
+			}
+			?>
+		</div>
+
+		<div class="wrap">
+			<h2>Historical weather</h2>
+			<?php
+				global $wpdb;
+				$table_name = $wpdb->prefix . 'wunderground_pws_daily';
+				$data       = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY observation_time DESC LIMIT 30" );
+			?>
+			<table style="min-width:2000px; border-color: black;">
+				<tr>
+					<th>Date</th>
+					<th>Temp High</th>
+					<th>Temp Low</th>
+					<th>Temp Avg</th>
+					<th>Wind Speed High</th>
+					<th>Wind Speed Low</th>
+					<th>Wind Speed Avg</th>
+					<th>Wind Gust High</th>
+					<th>Wind Gust Low</th>
+					<th>Wind Gust Avg</th>
+					<th>Dew Point High</th>
+					<th>Dew Point Low</th>
+					<th>Dew Point Avg</th>
+					<th>Wind Chill High</th>
+					<th>Wind Chill Low</th>
+					<th>Wind Chill Avg</th>
+					<th>Heat Index High</th>
+					<th>Heat Index Low</th>
+					<th>Heat Index Avg</th>
+					<th>Pressure Max</th>
+					<th>Pressure Min</th>
+					<th>Pressure Trend</th>
+					<th>Precip Rate</th>
+					<th>Precip Total</th>
+					<th>Wind Dir Avg</th>
+					<th>Solar Radiation High</th>
+					<th>UV High</th>
+					<th>Humidity High</th>
+					<th>Humidity Low</th>
+					<th>Humidity Avg</th>
+				</tr>
+				
+				<?php
+
+				foreach ( $data as $row ) {
+					echo '<tr>';
+					echo '<td>' . $row->observation_time . '</td>';
+					echo '<td>' . $row->tempHigh . '</td>';
+					echo '<td>' . $row->tempLow . '</td>';
+					echo '<td>' . $row->tempAvg . '</td>';
+					echo '<td>' . $row->windspeedHigh . '</td>';
+					echo '<td>' . $row->windspeedLow . '</td>';
+					echo '<td>' . $row->windspeedAvg . '</td>';
+					echo '<td>' . $row->windgustHigh . '</td>';
+					echo '<td>' . $row->windgustLow . '</td>';
+					echo '<td>' . $row->windgustAvg . '</td>';
+					echo '<td>' . $row->dewptHigh . '</td>';
+					echo '<td>' . $row->dewptLow . '</td>';
+					echo '<td>' . $row->dewptAvg . '</td>';
+					echo '<td>' . $row->windchillHigh . '</td>';
+					echo '<td>' . $row->windchillLow . '</td>';
+					echo '<td>' . $row->windchillAvg . '</td>';
+					echo '<td>' . $row->heatindexHigh . '</td>';
+					echo '<td>' . $row->heatindexLow . '</td>';
+					echo '<td>' . $row->heatindexAvg . '</td>';
+					echo '<td>' . $row->pressureMax . '</td>';
+					echo '<td>' . $row->pressureMin . '</td>';
+					echo '<td>' . $row->pressureTrend . '</td>';
+					echo '<td>' . $row->precipRate . '</td>';
+					echo '<td>' . $row->precipTotal . '</td>';
+					echo '<td>' . $row->winddirAvg . '</td>';
+					echo '<td>' . $row->solarRadiationHigh . '</td>';
+					echo '<td>' . $row->uvHigh . '</td>';
+					echo '<td>' . $row->humidityHigh . '</td>';
+					echo '<td>' . $row->humidityLow . '</td>';
+					echo '<td>' . $row->humidityAvg . '</td>';
+					echo '</tr>';
+				}
+				?>
+						
+				</table>
+	  </div >
+
 	<?php
 }
 
@@ -360,7 +474,7 @@ function current_weather_block_render() {
 		$options = get_option( 'wunderground_pws_data' );
 
 	if ( ! $options ) {
-		return '<div>Weather data not available.</div>';
+		return '<div>Weather data not available. Please check back in 10 minutes.</div>';
 	}
 
 		$temp         = isset( $options['temp'] ) ? $options['temp'] : '';

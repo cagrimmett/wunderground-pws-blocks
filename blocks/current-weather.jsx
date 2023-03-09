@@ -27,7 +27,7 @@ const WundergroundPWSDataBlock = ( { options, station_id } ) => {
 };
 
 registerBlockType( 'wu-pws-blocks/current-weather', {
-    title: 'Wunderground PWS Data',
+    title: 'Wunderground PWS Current Weather',
     icon: 'cloud',
     category: 'widgets',
     edit: function( props ) {
