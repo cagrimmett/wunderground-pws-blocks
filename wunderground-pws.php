@@ -357,8 +357,9 @@ function wu_pws_settings_page() {
 				global $wpdb;
 				$table_name = $wpdb->prefix . 'wunderground_pws_daily';
 				$data       = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY observation_time DESC LIMIT 30" );
-			if ( ! empty( $data )) { ?>
-				<table style="min-width:2000px; border-color: black;">
+			if ( ! empty( $data ) ) {
+				?>
+				<table style="min-width:2000px; border-uv_color: black;">
 				<tr>
 					<th>Date</th>
 					<th>Temp High</th>
@@ -451,6 +452,12 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wu_pws_settin
 // block assets
 
 add_action( 'init', 'register_wunderground_pws_current_weather_block' );
+
+function wu_pws_enqueue_styles() {
+	wp_enqueue_style( 'weather-block', plugin_dir_url( __FILE__ ) . '/styles/weather-block.css' );
+}
+add_action( 'wp_enqueue_scripts', 'wu_pws_enqueue_styles' );
+
 function register_wunderground_pws_current_weather_block() {
 	if ( ! function_exists( 'register_block_type' ) ) {
 		return;
@@ -469,7 +476,7 @@ function register_wunderground_pws_current_weather_block() {
 		'wu-pws-blocks/current-weather',
 		array(
 			'editor_script'   => 'wu-pws-blocks',
-			'style'           => 'wu-pws-blocks',
+			'style'           => 'weather-block',
 			'render_callback' => 'current_weather_block_render',
 		),
 	);
@@ -480,7 +487,7 @@ function current_weather_block_render() {
 
 	if ( ! $options ) {
 		return '<div>Weather data not available. Please check back in 10 minutes.</div>';
-	}
+	} else {
 
 		$temp         = isset( $options['temp'] ) ? $options['temp'] : '';
 		$heatIndex    = isset( $options['heatIndex'] ) ? $options['heatIndex'] : '';
@@ -496,24 +503,63 @@ function current_weather_block_render() {
 		$uv           = isset( $options['uv'] ) ? $options['uv'] : '';
 		$station_id   = get_option( 'wu_pws_station_id' );
 
-		$output  = '<div>';
-		$output .= "<h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
-		$output .= "<p><em>Last updated: $obsTimeLocal</em></p>";
-		$output .= "<p>Temperature: $temp &deg;F</p>";
-		$output .= "<p>Humidity: $humidity %</p>";
-		$output .= "<p>UV Index: $uv</p>";
-		$output .= "<p>Heat Index: $heatIndex &deg;F</p>";
-		$output .= "<p>Dew Point: $dewpt &deg;F</p>";
-		$output .= "<p>Precipitation Rate: $precipRate in/hr</p>";
-		$output .= "<p>Precipitation Total: $precipTotal in</p>";
-		$output .= "<p>Wind Chill: $windChill &deg;F</p>";
-		$output .= "<p>Wind Speed: $windSpeed mph</p>";
-		$output .= "<p>Wind Gust: $windGust mph</p>";
-		$output .= "<p>Pressure: $pressure inHg</p>";
-		$output .= '</div>';
+		// determining background colors
+		if ( $temp <= 45 ) {
+			$temp_color = 'blue';
+		} elseif ( $temp <= 70 ) {
+			$temp_color = 'green';
+		} else {
+			$temp_color = 'red';
+		}
+
+		if ( $humidity <= 30 ) {
+			$humidity_Ïcolor = 'yellow';
+		} elseif ( $humidity <= 60 ) {
+			$humidity_color = 'green';
+		} else {
+			$humidity_color = 'blue';
+		}
+
+		if ( $uv >= 0 && $uv < 3 ) {
+			$uv_color   = 'green';
+			$uv_message = 'No protection needed. You can safely stay outside using minimal sun protection.';
+		} elseif ( $uv >= 3 && $uv < 7 ) {
+			$uv_color   = 'yellow';
+			$uv_message = "Protection needed. Don't forget your sunscreen, hat, and sunglasses.";
+		} elseif ( $uv >= 7 && $uv < 8 ) {
+			$uv_color   = 'orange';
+			$uv_message = "Extra protection needed. Don't forget your sunscreen, hat, protective clothing, and sunglasses. Seek shade during midday hours.";
+		} elseif ( $uv >= 8 && $uv < 11 ) {
+			$uv_color   = 'red';
+			$uv_message = "Extra protection needed. Don't forget your sunscreen, hat, protective clothing, and sunglasses. Seek shade during midday hours.";
+		} else {
+			$uv_color   = 'purple';
+			$uv_message = "You should probably stay inside or in the shade, but if you go in the sun make sure you're wearing sunscreen, a hat, protective clothing, and sunglasses.";
+		}
+
+		$output              = "<div class='weather-block'>";
+		$output             .= '<div class="top-line">';
+				$output     .= '<div class="temp bordered-grid-item ' . $temp_color . '">';
+					$output .= '<div class="sub"></div>';
+					$output .= '<div class="main">' . $temp . '&deg;F<span class="label">Temp</span></div>';
+				$output     .= '</div>';
+				$output     .= '<div class="humidity bordered-grid-item ' . $humidity_color . '"><div class="main">' . $humidity . '%<span class="label">Humidity</span></div></div>';
+			$output         .= '</div>';
+			$output         .= '<div class="uv bordered-grid-item ' . $uv_color . '">';
+				$output     .= '<div class="uv-items"><div class="uv-number">' . $uv . '<span class="label">UV Index</span></div><div class="uv-message">' . $uv_message . '</div></div>';
+			$output         .= '</div>';
+			$output         .= '<div class="precipitation bordered-grid-item"><div class="rate">' . $precipRate . 'in/hr<span class="label">Precip Rate</span></div><div class="amount">' . $precipTotal . 'in<span class="label">Total Precip</span></div><div class="dewpoint">' . $dewpt . '&deg;F<span class="label">Dew Point</span></div></div>';
+			$output         .= '<div class="i5">';
+				$output     .= '<div class="pressure bordered-grid-item"></div>';
+				$output     .= '<div class="wind bordered-grid-item"></div>';
+			$output         .= '</div>';
+		$output             .= '</div>';
+		$output             .= "<h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
+		$output             .= '<p><em>Last updated:' . $obsTimeLocal . '</em></p>';
 
 		return $output;
 
+	}
 }
 
 // make options available via REST API

@@ -1,0 +1,182 @@
+.weather-block {  display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-auto-rows: 1fr;
+    gap: 15px 15px;
+    grid-auto-flow: row;
+  }
+
+  .weather-block .blue {
+    background-color: #6ac6f9
+  }
+
+  .weather-block .green {
+    background-color: #6af9a1;
+  }
+
+  .weather-block .yellow {
+    background-color: #f9f16a;
+  }
+  .weather-block .red {
+    background-color: #f96a6a;
+  }
+  .weather-block .purple {
+    background-color: #f96af9;
+  }
+  .weather-block .orange {
+    background-color: #f9a16a;
+  }
+
+  .weather-block span.label {
+    display: block;
+    justify-self: center;
+    font-size: 0.4em;
+    text-transform: uppercase;
+    opacity: 90%;
+  }
+
+ 
+
+  .bordered-grid-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .weather-block .top-line {  display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 15px 15px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "temp humidity";
+  }
+  
+  .weather-block .top-line .temp {  display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1.5fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "main"
+      "sub";
+    grid-area: temp;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+  }
+
+  .weather-block .top-line .temp .main { 
+    grid-area: main; 
+    justify-self: center;
+    text-align: center;
+    font-size: 3em;
+  }
+  
+  .weather-block .top-line .temp .sub {  display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". .";
+    grid-area: sub;
+  }
+  
+  .weather-block .top-line .humidity {  display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ".";
+    grid-area: humidity;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+  }
+
+  .weather-block .top-line .humidity .main { 
+    justify-self: center;
+    text-align: center;
+    font-size: 3em;
+  }
+  
+  .i5 {  display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 15px 15px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "wind pressure";
+  }
+  
+  .pressure { grid-area: pressure; }
+  
+  .wind {  display: grid;
+    grid-template-columns: 1fr 0.5fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". . .";
+    grid-area: wind;
+  }
+  
+  .uv {  display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-area: 2 / 1 / 3 / 2;
+  }
+  
+  .uv-items {  display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". .";
+    justify-content: center;
+    text-align: center;
+  }
+
+  .uv-number{
+    font-size: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+  }
+
+  .uv-message {
+    font-size: 1.25em;
+    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+  }
+
+  .precipitation {  display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". . .";
+    grid-area: 3 / 1 / 4 / 2;
+  }
+
+  .precipitation .amount, .precipitation .rate, .precipitation .dewpoint {
+    justify-self: center;
+    text-align: center;
+    font-size: 1.75em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+  }
