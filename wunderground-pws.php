@@ -130,6 +130,7 @@ function wu_pws_fetch_current_data() {
 		'heatIndex'    => $observation['imperial']['heatIndex'],
 		'dewpt'        => $observation['imperial']['dewpt'],
 		'windChill'    => $observation['imperial']['windChill'],
+		'windDir'      => $observation['winddir'],
 		'windSpeed'    => $observation['imperial']['windSpeed'],
 		'windGust'     => $observation['imperial']['windGust'],
 		'pressure'     => $observation['imperial']['pressure'],
@@ -505,6 +506,7 @@ function current_weather_block_render() {
 		$windChill    = isset( $options['windChill'] ) ? $options['windChill'] : '';
 		$windSpeed    = isset( $options['windSpeed'] ) ? $options['windSpeed'] : '';
 		$windGust     = isset( $options['windGust'] ) ? $options['windGust'] : '';
+		$windDir      = isset( $options['windDir'] ) ? $options['windDir'] : '';
 		$pressure     = isset( $options['pressure'] ) ? $options['pressure'] : '';
 		$precipRate   = isset( $options['precipRate'] ) ? $options['precipRate'] : '';
 		$precipTotal  = isset( $options['precipTotal'] ) ? $options['precipTotal'] : '';
@@ -514,7 +516,7 @@ function current_weather_block_render() {
 		$station_id   = get_option( 'wu_pws_station_id' );
 
 		// determining background colors
-		if ( $temp <= 45 ) {
+		if ( $temp <= 50 ) {
 			$temp_color = 'blue';
 		} elseif ( $temp <= 70 ) {
 			$temp_color = 'green';
@@ -523,7 +525,7 @@ function current_weather_block_render() {
 		}
 
 		if ( $humidity <= 30 ) {
-			$humidity_Ïcolor = 'yellow';
+			$humidity_color = 'yellow';
 		} elseif ( $humidity <= 60 ) {
 			$humidity_color = 'green';
 		} else {
@@ -547,21 +549,39 @@ function current_weather_block_render() {
 			$uv_message = "You should probably stay inside or in the shade, but if you go in the sun make sure you're wearing sunscreen, a hat, protective clothing, and sunglasses.";
 		}
 
+		if ($windDir >= 337.5 || $windDir < 22.5) {
+			$wind_direction = 'N';
+		} elseif ($windDir >= 22.5 && $windDir < 67.5) {
+			$wind_direction = 'NE';
+		} elseif ($windDir >= 67.5 && $windDir < 112.5) {
+			$wind_direction = 'E';
+		} elseif ($windDir >= 112.5 && $windDir < 157.5) {
+			$wind_direction = 'SE';
+		} elseif ($windDir >= 157.5 && $windDir < 202.5) {
+			$wind_direction = 'S';
+		} elseif ($windDir >= 202.5 && $windDir < 247.5) {
+			$wind_direction = 'SW';
+		} elseif ($windDir >= 247.5 && $windDir < 292.5) {
+			$wind_direction = 'W';
+		} elseif ($windDir >= 292.5 && $windDir < 337.5) {
+			$wind_direction = 'NW';
+		}
+
 		$output              = "<div class='weather-block'>";
 		$output             .= '<div class="top-line">';
 				$output     .= '<div class="temp bordered-grid-item ' . $temp_color . '">';
 					$output .= '<div class="sub"></div>';
-					$output .= '<div class="main">' . $temp . '&deg;F<span class="label">Temp</span></div>';
+					$output .= '<div class="main">' . $temp . ' &deg;F<span class="label">Temp</span></div>';
 				$output     .= '</div>';
 				$output     .= '<div class="humidity bordered-grid-item ' . $humidity_color . '"><div class="main">' . $humidity . '%<span class="label">Humidity</span></div></div>';
 			$output         .= '</div>';
 			$output         .= '<div class="uv bordered-grid-item ' . $uv_color . '">';
 				$output     .= '<div class="uv-items"><div class="uv-number">' . $uv . '<span class="label">UV Index</span></div><div class="uv-message">' . $uv_message . '</div></div>';
 			$output         .= '</div>';
-			$output         .= '<div class="precipitation bordered-grid-item"><div class="rate">' . $precipRate . 'in/hr<span class="label">Precip Rate</span></div><div class="amount">' . $precipTotal . 'in<span class="label">Total Precip</span></div><div class="dewpoint">' . $dewpt . '&deg;F<span class="label">Dew Point</span></div></div>';
+			$output         .= '<div class="precipitation bordered-grid-item"><div class="rate">' . $precipRate . ' in/hr<span class="label">Precip Rate</span></div><div class="amount">' . $precipTotal . ' in<span class="label">Total Precip</span></div><div class="dewpoint">' . $dewpt . ' &deg;F<span class="label">Dew Point</span></div></div>';
 			$output         .= '<div class="i5">';
-				$output     .= '<div class="pressure bordered-grid-item"></div>';
-				$output     .= '<div class="wind bordered-grid-item"></div>';
+				$output     .= '<div class="pressure bordered-grid-item"><div class="measurement">' . $pressure . ' inHg<span class="label">Pressure</span></div></div>';
+				$output     .= '<div class="wind bordered-grid-item"><div class="speed">' . $windSpeed . ' mph<span class="label">Wind Speed</span></div><div class="direction">' . $wind_direction . '<span class="label">Wind Direction</span></div><div class="gust">' . $windGust . ' mph<span class="label">Wind Gust</span></div></div>';
 			$output         .= '</div>';
 		$output             .= '</div>';
 		$output             .= "<h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";

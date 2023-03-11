@@ -4,6 +4,7 @@
     grid-auto-rows: 1fr;
     gap: 15px 15px;
     grid-auto-flow: row;
+    line-height: 1.5;
   }
 
   .weather-block .blue {
@@ -113,7 +114,21 @@
       "wind pressure";
   }
   
-  .pressure { grid-area: pressure; }
+  .pressure { 
+    grid-area: pressure; 
+    display: flex;
+    justify-content: center;
+  }
+
+  .pressure .measurement {
+    justify-self: center;
+    text-align: center;
+    font-size: 1.75em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+  }
   
   .wind {  display: grid;
     grid-template-columns: 1fr 0.5fr 1fr;
@@ -123,6 +138,16 @@
     grid-template-areas:
       ". . .";
     grid-area: wind;
+  }
+
+  .wind .speed, .wind .gust, .wind .direction {
+    justify-self: center;
+    text-align: center;
+    font-size: 1.75em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
   }
   
   .uv {  display: grid;
