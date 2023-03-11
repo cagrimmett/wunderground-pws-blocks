@@ -345,8 +345,10 @@ function wu_pws_settings_page() {
 				<p>Before using the block, you must enter your API key and station ID in the settings above.</p>
 			<?php } else { ?>
 				<p>Here is a preview of your current weather conditions:</p>
-				<?php
-				echo current_weather_block_render();
+				<div class="weather-block-review" style="max-width:800px">
+				<?php echo current_weather_block_render(); ?>
+				</div>
+			<?php
 			}
 			?>
 		</div>
@@ -457,6 +459,14 @@ function wu_pws_enqueue_styles() {
 	wp_enqueue_style( 'weather-block', plugin_dir_url( __FILE__ ) . '/styles/weather-block.css' );
 }
 add_action( 'wp_enqueue_scripts', 'wu_pws_enqueue_styles' );
+
+function wu_pws_enqueue_admin_styles() {
+	$screen = get_current_screen();
+	if ($screen->id === 'tools_page_wu-pws-settings') {
+	  wp_enqueue_style('weather-block', plugin_dir_url( __FILE__ ) . '/styles/weather-block.css' );
+	}
+  }
+  add_action('admin_enqueue_scripts', 'wu_pws_enqueue_admin_styles');
 
 function register_wunderground_pws_current_weather_block() {
 	if ( ! function_exists( 'register_block_type' ) ) {
