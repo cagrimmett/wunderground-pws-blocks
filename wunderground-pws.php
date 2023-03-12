@@ -349,7 +349,7 @@ function wu_pws_settings_page() {
 				<div class="weather-block-review" style="max-width:800px">
 				<?php echo current_weather_block_render(); ?>
 				</div>
-			<?php
+				<?php
 			}
 			?>
 		</div>
@@ -463,11 +463,11 @@ add_action( 'wp_enqueue_scripts', 'wu_pws_enqueue_styles' );
 
 function wu_pws_enqueue_admin_styles() {
 	$screen = get_current_screen();
-	if ($screen->id === 'tools_page_wu-pws-settings') {
-	  wp_enqueue_style('weather-block', plugin_dir_url( __FILE__ ) . '/styles/weather-block.css' );
+	if ( $screen->id === 'tools_page_wu-pws-settings' ) {
+		wp_enqueue_style( 'weather-block', plugin_dir_url( __FILE__ ) . '/styles/weather-block.css' );
 	}
-  }
-  add_action('admin_enqueue_scripts', 'wu_pws_enqueue_admin_styles');
+}
+  add_action( 'admin_enqueue_scripts', 'wu_pws_enqueue_admin_styles' );
 
 function register_wunderground_pws_current_weather_block() {
 	if ( ! function_exists( 'register_block_type' ) ) {
@@ -516,9 +516,9 @@ function current_weather_block_render() {
 		$station_id   = get_option( 'wu_pws_station_id' );
 
 		// determining background colors
-		if ( $temp <= 50 ) {
+		if ( $heatIndex <= 50 ) {
 			$temp_color = 'blue';
-		} elseif ( $temp <= 70 ) {
+		} elseif ( $heatIndex <= 70 ) {
 			$temp_color = 'green';
 		} else {
 			$temp_color = 'red';
@@ -549,29 +549,31 @@ function current_weather_block_render() {
 			$uv_message = "You should probably stay inside or in the shade, but if you go in the sun make sure you're wearing sunscreen, a hat, protective clothing, and sunglasses.";
 		}
 
-		if ($windDir >= 337.5 || $windDir < 22.5) {
+		if ( $windDir >= 337.5 || $windDir < 22.5 ) {
 			$wind_direction = 'N';
-		} elseif ($windDir >= 22.5 && $windDir < 67.5) {
+		} elseif ( $windDir >= 22.5 && $windDir < 67.5 ) {
 			$wind_direction = 'NE';
-		} elseif ($windDir >= 67.5 && $windDir < 112.5) {
+		} elseif ( $windDir >= 67.5 && $windDir < 112.5 ) {
 			$wind_direction = 'E';
-		} elseif ($windDir >= 112.5 && $windDir < 157.5) {
+		} elseif ( $windDir >= 112.5 && $windDir < 157.5 ) {
 			$wind_direction = 'SE';
-		} elseif ($windDir >= 157.5 && $windDir < 202.5) {
+		} elseif ( $windDir >= 157.5 && $windDir < 202.5 ) {
 			$wind_direction = 'S';
-		} elseif ($windDir >= 202.5 && $windDir < 247.5) {
+		} elseif ( $windDir >= 202.5 && $windDir < 247.5 ) {
 			$wind_direction = 'SW';
-		} elseif ($windDir >= 247.5 && $windDir < 292.5) {
+		} elseif ( $windDir >= 247.5 && $windDir < 292.5 ) {
 			$wind_direction = 'W';
-		} elseif ($windDir >= 292.5 && $windDir < 337.5) {
+		} elseif ( $windDir >= 292.5 && $windDir < 337.5 ) {
 			$wind_direction = 'NW';
 		}
 
 		$output              = "<div class='weather-block'>";
+		$output             .= "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
+		$output             .= '<p><em>Last updated: ' . $obsTimeLocal . '</em></p></div>';
 		$output             .= '<div class="top-line">';
 				$output     .= '<div class="temp bordered-grid-item ' . $temp_color . '">';
-					$output .= '<div class="sub"></div>';
-					$output .= '<div class="main">' . $temp . ' &deg;F<span class="label">Temp</span></div>';
+					$output .= '<div class="main">' . $heatIndex . '&deg;F<span class="label">Heat Index</span></div>';
+					$output .= '<div class="sub"><div class="actual">' . $temp . '&deg;F<span class="label">Actual Temp</span></div><div class="wind-chill">' . $windChill . '&deg;F<span class="label">Wind Chill</span></div></div>';
 				$output     .= '</div>';
 				$output     .= '<div class="humidity bordered-grid-item ' . $humidity_color . '"><div class="main">' . $humidity . '%<span class="label">Humidity</span></div></div>';
 			$output         .= '</div>';
@@ -581,11 +583,9 @@ function current_weather_block_render() {
 			$output         .= '<div class="precipitation bordered-grid-item"><div class="rate">' . $precipRate . ' in/hr<span class="label">Precip Rate</span></div><div class="amount">' . $precipTotal . ' in<span class="label">Total Precip</span></div><div class="dewpoint">' . $dewpt . ' &deg;F<span class="label">Dew Point</span></div></div>';
 			$output         .= '<div class="i5">';
 				$output     .= '<div class="pressure bordered-grid-item"><div class="measurement">' . $pressure . ' inHg<span class="label">Pressure</span></div></div>';
-				$output     .= '<div class="wind bordered-grid-item"><div class="speed">' . $windSpeed . ' mph<span class="label">Wind Speed</span></div><div class="direction">' . $wind_direction . '<span class="label">Wind Direction</span></div><div class="gust">' . $windGust . ' mph<span class="label">Wind Gust</span></div></div>';
+				$output     .= '<div class="wind bordered-grid-item"><div class="speed">' . $windSpeed . ' mph<span class="label">Wind Speed</span></div><div class="direction">' . $wind_direction . '<span class="label">Direction</span></div><div class="gust">' . $windGust . ' mph<span class="label">Wind Gust</span></div></div>';
 			$output         .= '</div>';
 		$output             .= '</div>';
-		$output             .= "<h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
-		$output             .= '<p><em>Last updated:' . $obsTimeLocal . '</em></p>';
 
 		return $output;
 
