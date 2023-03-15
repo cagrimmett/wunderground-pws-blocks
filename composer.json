@@ -1,0 +1,17 @@
+{
+    "name": "cagrimmett/wunderground-pws-wp-blocks",
+    "autoload": {
+        "psr-4": {
+            "Cagrimmett\\WundergroundPwsWpBlocks\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chuck Grimmett",
+            "email": "chuck.grimmett@automattic.com"
+        }
+    ],
+    "require": {
+        "davaxi/sparkline": "^2.2"
+    }
+}

@@ -1,0 +1,74 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "a6d99f4ffcbba1fc06f98ea15979ae54",
+    "packages": [
+        {
+            "name": "davaxi/sparkline",
+            "version": "2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/davaxi/Sparkline.git",
+                "reference": "7b1a978ec8c4d5f9eb9aa7b1af2efbc0130c6484"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/davaxi/Sparkline/zipball/7b1a978ec8c4d5f9eb9aa7b1af2efbc0130c6484",
+                "reference": "7b1a978ec8c4d5f9eb9aa7b1af2efbc0130c6484",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "ext-xdebug": "*",
+                "phpunit/php-code-coverage": "^3.3.0",
+                "phpunit/phpunit": "^5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Davaxi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Patiashvili",
+                    "email": "stratagem.david@gmail.com",
+                    "homepage": "https://www.patiashvili.fr/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Class (using GD) to generate sparklines",
+            "keywords": [
+                "php",
+                "picture",
+                "sparkline"
+            ],
+            "support": {
+                "issues": "https://github.com/davaxi/Sparkline/issues",
+                "source": "https://github.com/davaxi/Sparkline/releases"
+            },
+            "time": "2022-03-11T13:07:09+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
