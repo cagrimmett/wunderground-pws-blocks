@@ -78,6 +78,9 @@ function wu_pws_activate() {
 	if ( ! wp_next_scheduled( 'wu_pws_current_hook' ) ) {
 		wp_schedule_event( time(), 'ten_minutes', 'wu_pws_current_hook' );
 	}
+	if ( ! wp_next_scheduled( 'wu_pws_hourly_hook' ) ) {
+		wp_schedule_event( time(), 'hourly', 'wu_pws_hourly_hook' );
+	}
 }
 register_activation_hook( __FILE__, 'wu_pws_activate' );
 
@@ -93,6 +96,7 @@ function add_cron_interval( $schedules ) {
 function wu_pws_deactivate() {
 	wp_clear_scheduled_hook( 'wu_pws_current_hook' );
 	wp_clear_scheduled_hook( 'wu_pws_daily_hook' );
+	wp_clear_scheduled_hook( 'wu_pws_hourly_hook' );
 }
 register_deactivation_hook( __FILE__, 'wu_pws_deactivate' );
 
@@ -148,6 +152,29 @@ function wu_pws_fetch_current_data() {
 add_action( 'wu_pws_current_hook', 'wu_pws_fetch_current_data' );
 
 
+// get hourly observations for sparklines
+function wu_pws_fetch_hourly_7day() {
+	$api_key    = get_option( 'wu_pws_api_key' );
+	$station_id = get_option( 'wu_pws_station_id' );
+
+	$api_url = 'https://api.weather.com/v2/pws/observations/hourly/7day?stationId=' . $station_id . '&format=json&units=e&apiKey=' . $api_key;
+
+	$response = wp_remote_get( $api_url );
+
+	if ( is_wp_error( $response ) ) {
+		error_log( 'Error fetching hourly data from Wunderground API: ' . $response->get_error_message() );
+		return;
+	}
+
+	$body = wp_remote_retrieve_body( $response );
+	$data = json_decode( $body, true );
+
+	update_option( 'wunderground_pws_hourly_data', $data );
+	error_log( 'Wunderground PWS hourly data updated successfully' );
+}
+
+add_action( 'wu_pws_hourly_hook', 'wu_pws_fetch_hourly_7day' );
+
 // get daily summary
 
 function wu_pws_fetch_daily_summary() {
@@ -166,13 +193,6 @@ function wu_pws_fetch_daily_summary() {
 	// If there was an error fetching the data, log an error and return
 	if ( is_wp_error( $response ) ) {
 		error_log( 'Error fetching data from Wunderground API: ' . $response->get_error_message() );
-		return;
-	}
-
-	// If the response code is not 200 OK, log an error and return
-	$response_code = wp_remote_retrieve_response_code( $response );
-	if ( $response_code !== 200 ) {
-		error_log( 'Error fetching data from Wunderground API: Response code ' . $response_code );
 		return;
 	}
 
@@ -567,12 +587,39 @@ function current_weather_block_render() {
 			$wind_direction = 'NW';
 		}
 
+		// Sparklines
+		require 'vendor/autoload.php';
+
+		$hourly_observations = get_option( 'wunderground_pws_hourly_data' );
+		$tempAvgs            = array();
+		foreach ( $hourly_observations['observations'] as $obs ) {
+			// Extract the tempAvg value from the imperial array and add it to the array of tempAvgs
+			$tempAvgs[] = $obs['imperial']['tempAvg'];
+		}
+
+		// Get the length of the array
+		$length = count( $tempAvgs );
+
+		// Keep only the last 48 hours
+		$tempAvgs = array_slice( $tempAvgs, $length - 48, 48 );
+
+		$tempAvgSparkline = new Davaxi\Sparkline();
+		$tempAvgSparkline->setData( $tempAvgs );
+		$tempAvgSparkline->setLineColorHex( '#000000' );
+		$tempAvgSparkline->deactivateAllFillColor();
+		$tempAvgSparkline->deactivateBackgroundColor();
+		$tempAvgSparkline->setHeight( 40 );
+		$tempAvgSparkline->setWidth( 300 );
+		$tempAvgSparkline->setLineThickness(1.5);
+		$tempAvgSparkline->generate();
+		$tempAvgSparkline->save( ABSPATH . 'wp-content/wunderground-pws/tempAvgSparkline.png' );
+
 		$output              = "<div class='weather-block'>";
 		$output             .= "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
 		$output             .= '<p><em>Last updated: ' . $obsTimeLocal . '</em></p></div>';
 		$output             .= '<div class="top-line">';
 				$output     .= '<div class="temp bordered-grid-item ' . $temp_color . '">';
-					$output .= '<div class="main">' . $heatIndex . '&deg;F<span class="label">Heat Index</span></div>';
+					$output .= '<div class="main">' . $heatIndex . '&deg;F<span class="label">Heat Index</span><img src="/wp-content/wunderground-pws/tempAvgSparkline.png" /></div>';
 					$output .= '<div class="sub"><div class="actual">' . $temp . '&deg;F<span class="label">Actual Temp</span></div><div class="wind-chill">' . $windChill . '&deg;F<span class="label">Wind Chill</span></div></div>';
 				$output     .= '</div>';
 				$output     .= '<div class="humidity bordered-grid-item ' . $humidity_color . '"><div class="main">' . $humidity . '%<span class="label">Humidity</span></div></div>';
