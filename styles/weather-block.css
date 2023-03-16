@@ -1,7 +1,7 @@
 .weather-block {  display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    grid-auto-rows: 1fr;
+    grid-auto-rows: 0.8fr;
     gap: 15px 15px;
     grid-auto-flow: row;
     line-height: 1.5;
@@ -115,10 +115,8 @@
     grid-template-areas:
       ".";
     grid-area: humidity;
-    display: flex;
     justify-content: center;
     align-items: center;
-    flex-flow: column;
   }
 
   .weather-block .top-line .humidity .main { 
@@ -146,19 +144,13 @@
     justify-self: center;
     text-align: center;
     font-size: 1.75em;
-    display: flex;
+    display: grid;
     justify-content: center;
     align-items: center;
-    flex-flow: column;
   }
   
-  .wind {  display: grid;
-    grid-template-columns: 1fr 0.5fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 0px 0px;
-    grid-auto-flow: row;
-    grid-template-areas:
-      ". . .";
+  .wind { 
+    display: grid;
     grid-area: wind;
   }
 
@@ -172,7 +164,8 @@
     flex-flow: column;
   }
   
-  .uv {  display: grid;
+  .uv {  
+    display: grid;
     grid-auto-columns: 1fr;
     grid-auto-rows: 1fr;
     gap: 0px 0px;
@@ -209,13 +202,8 @@
     flex-flow: column;
   }
 
-  .precipitation {  display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 0px 0px;
-    grid-auto-flow: row;
-    grid-template-areas:
-      ". . .";
+  .precipitation {  
+    display: grid;
     grid-area: precip;
   }
 
@@ -227,4 +215,30 @@
     justify-content: center;
     align-items: center;
     flex-flow: column;
+  }
+
+  .precipitation .measurements {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+  }
+
+  .wind .measurements {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". . .";
+  }
+
+  .temp, .humidity, .pressure, .wind, .uv, .precipitation {
+    /*padding-bottom: 5px;*/
+  }
+
+  img {
+    align-self: end;
   }
