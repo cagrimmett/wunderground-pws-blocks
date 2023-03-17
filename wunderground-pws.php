@@ -211,8 +211,6 @@ function wu_pws_fetch_hourly_7day() {
 		$windSpeedAvgs['data'][] = $obs['imperial']['windspeedAvg'];
 	}
 
-	update_option( 'cag-debug', $pressureAvgs['data'] );
-
 	foreach ( array( $tempAvgs, $humidityAvgs, $windSpeedAvgs, $precipTotals, $uvAvgs ) as $obs_sparkline ) {
 		$length = count( $obs_sparkline['data'] );
 		if ( 'precipTotals' == $obs_sparkline['name'] ) {
@@ -235,7 +233,7 @@ function wu_pws_fetch_hourly_7day() {
 		$sparkline->setLineThickness( 1.25 );
 		$sparkline->setExpire( '+1 hour' );
 		$sparkline->generate();
-		$sparkline->save( ABSPATH . 'wp-content/uploads/wu-pws/' . $obs_sparkline['name'] . '-sparkline.png' );
+		$sparkline->save( WP_CONTENT_DIR . '/uploads/wu-pws/' . $obs_sparkline['name'] . '-sparkline.png' );
 		error_log( 'Saved sparkline for ' . $obs_sparkline['name'] );
 	}
 	$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 48, 48 );
