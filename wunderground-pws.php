@@ -3,7 +3,7 @@
  * Plugin Name: Wunderground PWS
  * Plugin URI: http://www.cagrimmett.com/
  * Description: Fetches weather data from Wunderground for a personal weather station and displays it in Gutenberg blocks.
- * Version: 0.0.1
+ * Version: 0.2.0
  * Author: cagrimmett
  * Author URI: https://cagrimmett.com
  * License:           GPL v2 or later
@@ -175,40 +175,39 @@ function wu_pws_fetch_hourly_7day() {
 	$data = json_decode( $body, true );
 
 	update_option( 'wunderground_pws_hourly_data', $data );
-	
 
 	/* Temp, humidity, UV, total precip, wind speed, pressure */
 
 	// Sparklines
 	require 'vendor/autoload.php';
 
-	$tempAvgs = array(
-		'name' => "tempAvgs",
-		'data'   => array(),
+	$tempAvgs      = array(
+		'name' => 'tempAvgs',
+		'data' => array(),
 	);
-	$humidityAvgs = array(
-		'name' => "humidityAvgs",
-		'data'   => array(),
+	$humidityAvgs  = array(
+		'name' => 'humidityAvgs',
+		'data' => array(),
 	);
 	$windSpeedAvgs = array(
-		'name' => "windSpeedAvgs",
-		'data'   => array(),
+		'name' => 'windSpeedAvgs',
+		'data' => array(),
 	);
-	$precipTotals = array(
-		'name' => "precipTotals",
-		'data'   => array(),
+	$precipTotals  = array(
+		'name' => 'precipTotals',
+		'data' => array(),
 	);
-	$uvAvgs = array(
-		'name' => "uvAvgs",
-		'data'   => array(),
+	$uvAvgs        = array(
+		'name' => 'uvAvgs',
+		'data' => array(),
 	);
 
 	foreach ( $data['observations'] as $obs ) {
 		// Extract the tempAvg value from the imperial array and add it to the array of tempAvgs
-		$tempAvgs['data'][] = $obs['imperial']['tempAvg'];
-		$humidityAvgs['data'][] = $obs['humidityAvg'];
-		$uvAvgs['data'][] = $obs['uvHigh'];
-		$precipTotals['data'][] = $obs['imperial']['precipTotal'] * 10;
+		$tempAvgs['data'][]      = $obs['imperial']['tempAvg'];
+		$humidityAvgs['data'][]  = $obs['humidityAvg'];
+		$uvAvgs['data'][]        = $obs['uvHigh'];
+		$precipTotals['data'][]  = $obs['imperial']['precipTotal'] * 10;
 		$windSpeedAvgs['data'][] = $obs['imperial']['windspeedAvg'];
 	}
 
@@ -216,15 +215,15 @@ function wu_pws_fetch_hourly_7day() {
 
 	foreach ( array( $tempAvgs, $humidityAvgs, $windSpeedAvgs, $precipTotals, $uvAvgs ) as $obs_sparkline ) {
 		$length = count( $obs_sparkline['data'] );
-		if ( "precipTotals" == $obs_sparkline['name']) {
+		if ( 'precipTotals' == $obs_sparkline['name'] ) {
 			$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 120, 120 );
-			$width = 687;
-		} elseif ( "windSpeedAvgs" == $obs_sparkline['name'] ) {
+			$width                 = 687;
+		} elseif ( 'windSpeedAvgs' == $obs_sparkline['name'] ) {
 			$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 72, 72 );
-			$width = 475;
+			$width                 = 475;
 		} else {
 			$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 48, 48 );
-			$width = 325;
+			$width                 = 325;
 		}
 		$sparkline = new Davaxi\Sparkline();
 		$sparkline->setData( $obs_sparkline['data'] );
@@ -233,13 +232,13 @@ function wu_pws_fetch_hourly_7day() {
 		$sparkline->deactivateBackgroundColor();
 		$sparkline->setHeight( 40 );
 		$sparkline->setWidth( $width );
-		$sparkline->setLineThickness(1.25);
-		$sparkline->setExpire('+1 hour');
+		$sparkline->setLineThickness( 1.25 );
+		$sparkline->setExpire( '+1 hour' );
 		$sparkline->generate();
 		$sparkline->save( ABSPATH . 'wp-content/uploads/wu-pws/' . $obs_sparkline['name'] . '-sparkline.png' );
 		error_log( 'Saved sparkline for ' . $obs_sparkline['name'] );
 	}
-$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 48, 48 );
+	$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 48, 48 );
 }
 
 add_action( 'wu_pws_hourly_hook', 'wu_pws_fetch_hourly_7day' );
@@ -659,9 +658,9 @@ function current_weather_block_render() {
 		// Get pressure trend
 
 		$pressure_data = get_option( 'wunderground_pws_hourly_data' );
-		$length = count( $pressure_data['observations'] );
+		$length        = count( $pressure_data['observations'] );
 		//var_dump( $length );
-		$pressure_trend_number = $pressure_data['observations'][$length - 1]['imperial']['pressureTrend'];
+		$pressure_trend_number = $pressure_data['observations'][ $length - 1 ]['imperial']['pressureTrend'];
 		if ( $pressure_trend_number > 0 ) {
 			$pressure_trend = 'Rising ↗️';
 		} elseif ( $pressure_trend_number < 0 ) {
@@ -669,7 +668,6 @@ function current_weather_block_render() {
 		} else {
 			$pressure_trend = 'Holding steady ↔️';
 		}
-
 
 		$output              = "<div class='weather-block'>";
 		$output             .= "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
