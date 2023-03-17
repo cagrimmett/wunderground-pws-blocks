@@ -190,10 +190,6 @@ function wu_pws_fetch_hourly_7day() {
 		'name' => "humidityAvgs",
 		'data'   => array(),
 	);
-	$pressureAvgs = array(
-		'name' => "pressureAvgs",
-		'data'   => array(),
-	);
 	$windSpeedAvgs = array(
 		'name' => "windSpeedAvgs",
 		'data'   => array(),
@@ -214,22 +210,18 @@ function wu_pws_fetch_hourly_7day() {
 		$uvAvgs['data'][] = $obs['uvHigh'];
 		$precipTotals['data'][] = $obs['imperial']['precipTotal'] * 10;
 		$windSpeedAvgs['data'][] = $obs['imperial']['windspeedAvg'];
-		$pressureAvgs['data'][] = (($obs['imperial']['pressureMin'] + $obs['imperial']['pressureMax']) / 2) * 10;
 	}
 
-	//update_option( 'cag-debug', $precipTotals['data'] );
+	update_option( 'cag-debug', $pressureAvgs['data'] );
 
-	foreach ( array( $tempAvgs, $humidityAvgs, $pressureAvgs, $windSpeedAvgs, $precipTotals, $uvAvgs ) as $obs_sparkline ) {
+	foreach ( array( $tempAvgs, $humidityAvgs, $windSpeedAvgs, $precipTotals, $uvAvgs ) as $obs_sparkline ) {
 		$length = count( $obs_sparkline['data'] );
 		if ( "precipTotals" == $obs_sparkline['name']) {
 			$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 120, 120 );
-			$width = 650;
+			$width = 687;
 		} elseif ( "windSpeedAvgs" == $obs_sparkline['name'] ) {
 			$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 72, 72 );
 			$width = 475;
-		} elseif ( "pressureAvgs" == $obs_sparkline['name'] ) {
-			$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 48, 48 );
-			$width = 175;
 		} else {
 			$obs_sparkline['data'] = array_slice( $obs_sparkline['data'], $length - 48, 48 );
 			$width = 325;
@@ -241,7 +233,8 @@ function wu_pws_fetch_hourly_7day() {
 		$sparkline->deactivateBackgroundColor();
 		$sparkline->setHeight( 40 );
 		$sparkline->setWidth( $width );
-		$sparkline->setLineThickness(1);
+		$sparkline->setLineThickness(1.25);
+		$sparkline->setExpire('+1 hour');
 		$sparkline->generate();
 		$sparkline->save( ABSPATH . 'wp-content/uploads/wu-pws/' . $obs_sparkline['name'] . '-sparkline.png' );
 		error_log( 'Saved sparkline for ' . $obs_sparkline['name'] );
@@ -663,6 +656,20 @@ function current_weather_block_render() {
 			$wind_direction = 'NW';
 		}
 
+		// Get pressure trend
+
+		$pressure_data = get_option( 'wunderground_pws_hourly_data' );
+		$length = count( $pressure_data['observations'] );
+		//var_dump( $length );
+		$pressure_trend_number = $pressure_data['observations'][$length - 1]['imperial']['pressureTrend'];
+		if ( $pressure_trend_number > 0 ) {
+			$pressure_trend = 'Rising ↗️';
+		} elseif ( $pressure_trend_number < 0 ) {
+			$pressure_trend = 'Falling ↘️';
+		} else {
+			$pressure_trend = 'Holding steady ↔️';
+		}
+
 
 		$output              = "<div class='weather-block'>";
 		$output             .= "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
@@ -679,7 +686,7 @@ function current_weather_block_render() {
 			$output         .= '</div>';
 			$output         .= '<div class="precipitation bordered-grid-item"><div class="measurements"><div class="rate">' . $precipRate . ' in/hr<span class="label">Precip Rate</span></div><div class="amount">' . $precipTotal . ' in<span class="label">Total Precip</span></div><div class="dewpoint">' . $dewpt . ' &deg;F<span class="label">Dew Point</span></div></div><img src="/wp-content/uploads/wu-pws/precipTotals-sparkline.png" /></div>';
 			$output         .= '<div class="i5">';
-				$output     .= '<div class="pressure bordered-grid-item"><div class="measurement">' . $pressure . ' inHg<span class="label">Pressure</span><img src="/wp-content/uploads/wu-pws/pressureAvgs-sparkline.png" /></div></div>';
+				$output     .= '<div class="pressure bordered-grid-item"><div class="measurement">' . $pressure . ' inHg<span class="label">Pressure</span></div><div class="pressure-trend">' . $pressure_trend . '</div></div>';
 				$output     .= '<div class="wind bordered-grid-item"><div class="measurements"><div class="speed">' . $windSpeed . ' mph<span class="label">Wind Speed</span></div><div class="direction">' . $wind_direction . '<span class="label">Direction</span></div><div class="gust">' . $windGust . ' mph<span class="label">Wind Gust</span></div></div><img src="/wp-content/uploads/wu-pws/windSpeedAvgs-sparkline.png" /></div>';
 			$output         .= '</div>';
 		$output             .= '</div>';

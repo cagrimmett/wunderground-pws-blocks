@@ -136,7 +136,7 @@
   
   .pressure { 
     grid-area: pressure; 
-    display: flex;
+    display: grid;
     justify-content: center;
   }
 
@@ -144,7 +144,8 @@
     justify-self: center;
     text-align: center;
     font-size: 1.75em;
-    display: grid;
+    display: flex;
+    flex-flow: column;
     justify-content: center;
     align-items: center;
   }
@@ -235,10 +236,16 @@
       ". . .";
   }
 
-  .temp, .humidity, .pressure, .wind, .uv, .precipitation {
-    /*padding-bottom: 5px;*/
-  }
-
   img {
     align-self: end;
+  }
+
+  .temp img {
+    margin-top: 10px;
+  }
+
+  .pressure-trend {
+    font-size: 1em;
+    text-align: center;
+    align-self: center;
   }
