@@ -25,27 +25,6 @@
     margin: 0;
   }
 
-  .weather-block .blue {
-    background-color: #6ac6f9
-  }
-
-  .weather-block .green {
-    background-color: #6af9a1;
-  }
-
-  .weather-block .yellow {
-    background-color: #f9f16a;
-  }
-  .weather-block .red {
-    background-color: #f96a6a;
-  }
-  .weather-block .purple {
-    background-color: #f96af9;
-  }
-  .weather-block .orange {
-    background-color: #f9a16a;
-  }
-
   .weather-block span.label {
     display: block;
     justify-self: center;
@@ -53,8 +32,6 @@
     text-transform: uppercase;
     opacity: 90%;
   }
-
- 
 
   .bordered-grid-item {
     border: 1px solid #ccc;

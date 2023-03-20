@@ -579,7 +579,7 @@ function register_wunderground_pws_current_weather_block() {
 	);
 }
 
-function getTemperatureColor($temperature, $temp_colors) {
+function getBackgroundColor($temperature, $temp_colors) {
 	$colorKeys = array_keys($temp_colors);
 	sort($colorKeys); // sort color keys in ascending order
 	foreach ($colorKeys as $i => $colorKey) {
@@ -616,6 +616,21 @@ function invertSparkline($temperature, $temp_colors) {
 		// if temperature is higher than the highest color key, return the highest color
 		if ($i === count($colorKeys) - 1) {
 			return $temp_colors[$colorKeys[$i]]['invert'];
+		}
+	}
+}
+
+// Get message
+function getMessage($number, $array) {
+	$colorKeys = array_keys($array);
+	sort($colorKeys); // sort color keys in ascending order
+	foreach ($colorKeys as $i => $colorKey) {
+		if ($number <= $colorKey) {
+			return $array[$colorKey]['message'];
+		}
+		// if temperature is higher than the highest color key, return the highest color
+		if ($i === count($colorKeys) - 1) {
+			return $array[$colorKeys[$i]]['message'];
 		}
 	}
 }
@@ -686,17 +701,28 @@ function current_weather_block_render() {
 		);
 // Humidity scale colors https://community.windy.com/assets/uploads/files/1628145080761-97c3b4ac-8f8e-4166-8322-bd145bbe8b3b.jpeg
 		$humidity_colors = array(
-			10  => array('color' => '#f10101', 'text' => '#222222', 'invert' => 0, ),
-			20  => array('color' => '#c74011', 'text' => '#FFFFFF', 'invert' => 1, ),
+			10  => array('color' => '#87203e', 'text' => '#FFFFFF', 'invert' => 1, ),
+			20  => array('color' => '#af4d4c', 'text' => '#FFFFFF', 'invert' => 1, ),
 			30  => array('color' => '#c28441', 'text' => '#222222', 'invert' => 0, ),
-			40  => array('color' => '#37a13b', 'text' => '#222222', 'invert' => 0, ),
+			40  => array('color' => '#879b84', 'text' => '#222222', 'invert' => 0, ),
 			50  => array('color' => '#77cbbf', 'text' => '#222222', 'invert' => 0, ),
 			60  => array('color' => '#36afae', 'text' => '#222222', 'invert' => 0, ),
 			70  => array('color' => '#3a9eae', 'text' => '#222222', 'invert' => 0, ),
 			80  => array('color' => '#1095a9', 'text' => '#222222', 'invert' => 0, ),
 			90  => array('color' => '#3984ae', 'text' => '#222222', 'invert' => 0, ),
-			100 => array('color' => '#394774', 'text' => '#ffffff', 'invert' => 1, ),
+			100 => array('color' => '#2f4774', 'text' => '#ffffff', 'invert' => 1, ),
 		);
+
+		//UV index colors https://ix-cdn.b2e5.com/images/52820/52820_421fc31b2ed24bfda33716eda666c1a1_1658322046.jpeg
+
+		$uv_colors = array(
+			2   => array('color' => '#9dc507', 'text' => '#222222', 'invert' => 0, 'message' => 'Low risk, no protection needed.', ),
+			5   => array('color' => '#ffbb00', 'text' => '#222222', 'invert' => 0, 'message' => 'Moderate. Some protection is recommended', ),
+			7   => array('color' => '#feb100', 'text' => '#222222', 'invert' => 0, 'message' => 'High. Protection is essential.', ),
+			10   => array('color' => '#f45023', 'text' => '#222222', 'invert' => 0, 'message' => 'Very high. Extra protection is needed.', ),
+			11  => array('color' => '#9e47cc', 'text' => '#FFFFFF', 'invert' => 1, 'message' => 'Extreme. Stay inside.', ),
+		);
+		
 
 		if ( $humidity <= 30 ) {
 			$humidity_color = 'yellow';
@@ -758,14 +784,14 @@ function current_weather_block_render() {
 		$output              = "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4><p><em>Last updated: $obsTimeLocal</em></p></div>";
 		$output             .= "<div class='weather-block'>";
 		$output             .= '<div class="top-line">';
-				$output     .= '<div class="temp bordered-grid-item" style="background-color: ' . getTemperatureColor($heatIndex, $temp_colors) . '; color: ' . getTextColor($heatIndex, $temp_colors) . '">';
+				$output     .= '<div class="temp bordered-grid-item" style="background-color: ' . getBackgroundColor($heatIndex, $temp_colors) . '; color: ' . getTextColor($heatIndex, $temp_colors) . '">';
 					$output .= '<div class="main">' . $heatIndex . '&deg;F<span class="label">Heat Index</span></div>';
 					$output .= '<div class="sub"><div class="actual">' . $temp . '&deg;F<span class="label">Actual Temp</span></div><div class="wind-chill">' . $windChill . '&deg;F<span class="label">Wind Chill</span></div></div>';
 				$output     .= '<img src="/wp-content/uploads/wu-pws/tempAvgs-sparkline.png" style="filter: invert('. invertSparkline($heatIndex, $temp_colors) .')"/></div>';
-				$output     .= '<div class="humidity bordered-grid-item" style="background-color: ' . getTemperatureColor($humidity, $humidity_colors) . '; color: ' . getTextColor($heatIndex, $humidity_colors) . '"><div class="main">' . $humidity . '%<span class="label">Humidity</span></div><img src="/wp-content/uploads/wu-pws/humidityAvgs-sparkline.png" style="filter: invert('. invertSparkline($humidity, $humidity_colors) .')" /></div>';
+				$output     .= '<div class="humidity bordered-grid-item" style="background-color: ' . getBackgroundColor($humidity, $humidity_colors) . '; color: ' . getTextColor($heatIndex, $humidity_colors) . '"><div class="main">' . $humidity . '%<span class="label">Humidity</span></div><img src="/wp-content/uploads/wu-pws/humidityAvgs-sparkline.png" style="filter: invert('. invertSparkline($humidity, $humidity_colors) .')" /></div>';
 			$output         .= '</div>';
-			$output         .= '<div class="uv bordered-grid-item ' . $uv_color . '">';
-				$output     .= '<div class="uv-items"><div class="uv-number">' . $uv . '<span class="label">UV Index</span><img src="/wp-content/uploads/wu-pws/uvAvgs-sparkline.png" alt="UV index sparkline over the past 48 hours" /></div><div class="uv-message">' . $uv_message . '</div></div>';
+			$output         .= '<div class="uv bordered-grid-item" style="background-color: ' . getBackgroundColor($uv, $uv_colors) . '; color: ' . getTextColor($uv, $uv_colors) . '">';
+				$output     .= '<div class="uv-items"><div class="uv-number">' . $uv . '<span class="label">UV Index</span><img src="/wp-content/uploads/wu-pws/uvAvgs-sparkline.png" alt="UV index sparkline over the past 48 hours" style="filter: invert('. invertSparkline($uv, $uv_colors) .')" /></div><div class="uv-message">' . getMessage($uv, $uv_colors) . '</div></div>';
 			$output         .= '</div>';
 			$output         .= '<div class="precipitation bordered-grid-item"><div class="measurements"><div class="rate">' . $precipRate . ' in/hr<span class="label">Precip Rate</span></div><div class="amount">' . $precipTotal . ' in<span class="label">Total Precip</span></div><div class="dewpoint">' . $dewpt . ' &deg;F<span class="label">Dew Point</span></div></div><img src="/wp-content/uploads/wu-pws/precipTotals-sparkline.png" /></div>';
 			$output         .= '<div class="i5">';
