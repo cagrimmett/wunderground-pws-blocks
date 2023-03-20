@@ -1,4 +1,5 @@
-.weather-block {  display: grid;
+.weather-block {  
+  display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     grid-auto-rows: 0.8fr;
@@ -6,8 +7,7 @@
     grid-auto-flow: row;
     line-height: 1.5;
     grid-template-areas: 
-      "weather-block-header"
-      "temp-top"
+      "top-line"
       "uv"
       "precip"
       "wind";
@@ -18,7 +18,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    grid-area: weather-block-header;
   }
 
   .weather-block-header h4 {
@@ -62,14 +61,15 @@
     padding: 10px;
   }
   
-  .weather-block .top-line {  display: grid;
+  .weather-block .top-line {  
+    display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
     gap: 15px 15px;
     grid-auto-flow: row;
     grid-template-areas:
       "temp humidity";
-    grid-area: temp-top;
+    grid-area: top-line;
   }
   
   .weather-block .top-line .temp { 
@@ -112,8 +112,6 @@
     grid-template-rows: 1fr;
     gap: 0px 0px;
     grid-auto-flow: row;
-    grid-template-areas:
-      ".";
     grid-area: humidity;
     justify-content: center;
     align-items: center;
@@ -125,7 +123,8 @@
     font-size: 3em;
   }
   
-  .i5 {  display: grid;
+  .i5 {  
+    display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-rows: 1fr;
     gap: 15px 15px;
@@ -175,20 +174,21 @@
     
   }
   
-  .uv-items {  display: grid;
+  .uv-items {  
+    display: grid;
     grid-template-columns: 1fr 2fr;
     grid-template-rows: 1fr;
     gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
-      ". .";
+      "uv-number uv-message";
     justify-content: center;
     text-align: center;
   }
 
-  .uv-number{
+  .uv-number {
     font-size: 3em;
-    display: flex;
+    display: grid;
     justify-content: center;
     align-items: center;
     flex-flow: column;
@@ -249,3 +249,45 @@
     text-align: center;
     align-self: center;
   }
+
+  @media (max-width: 650px) {
+    .weather-block .top-line, .weather-block .i5, .weather-block .i5 .wind .measurements, .weather-block .i5 .wind, .weather-block .uv, .weather-block .uv .uv-items, .weather-block .precipitation .measurements {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+  }
+  .weather-block .top-line {
+    grid-template-areas:
+      "temp"
+      "humidity";
+  }
+  .weather-block .i5 {
+    grid-template-areas:
+      "wind"
+      "pressure";
+  }
+  .weather-block .uv-items {
+    grid-template-areas:
+      "uv-number"
+      "uv-message";
+  }
+  .weather-block .precipitation .measurements {
+    grid-template-areas: 
+    "amount"
+    "rate"
+    "dewpoint";
+  }
+  .weather-block .precipitation img, .weather-block .wind img {
+    max-width: 100%;
+  }
+  .weather-block .i5 .wind .measurements {
+    grid-template-areas: 
+    "speed"
+    "direction"
+    "gust";
+  }
+  img {
+    align-self: center;
+    justify-self: center;
+    vertical-align: bottom;
+  }
+}

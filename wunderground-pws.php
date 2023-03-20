@@ -667,9 +667,8 @@ function current_weather_block_render() {
 			$pressure_trend = 'Holding steady ↔️';
 		}
 
-		$output              = "<div class='weather-block'>";
-		$output             .= "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4>";
-		$output             .= '<p><em>Last updated: ' . $obsTimeLocal . '</em></p></div>';
+		$output              = "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4><p><em>Last updated: $obsTimeLocal</em></p></div>";
+		$output             .= "<div class='weather-block'>";
 		$output             .= '<div class="top-line">';
 				$output     .= '<div class="temp bordered-grid-item ' . $temp_color . '">';
 					$output .= '<div class="main">' . $heatIndex . '&deg;F<span class="label">Heat Index</span></div>';
