@@ -579,6 +579,47 @@ function register_wunderground_pws_current_weather_block() {
 	);
 }
 
+function getTemperatureColor($temperature, $temp_colors) {
+	$colorKeys = array_keys($temp_colors);
+	sort($colorKeys); // sort color keys in ascending order
+	foreach ($colorKeys as $i => $colorKey) {
+		if ($temperature <= $colorKey) {
+			return $temp_colors[$colorKey]['color'];
+		}
+		// if temperature is higher than the highest color key, return the highest color
+		if ($i === count($colorKeys) - 1) {
+			return $temp_colors[$colorKeys[$i]]['color'];
+		}
+	}
+}
+function getTextColor($temperature, $temp_colors) {
+	$colorKeys = array_keys($temp_colors);
+	sort($colorKeys); // sort color keys in ascending order
+	foreach ($colorKeys as $i => $colorKey) {
+		if ($temperature <= $colorKey) {
+			return $temp_colors[$colorKey]['text'];
+		}
+		// if temperature is higher than the highest color key, return the highest color
+		if ($i === count($colorKeys) - 1) {
+			return $temp_colors[$colorKeys[$i]]['text'];
+		}
+	}
+}
+
+function invertSparkline($temperature, $temp_colors) {
+	$colorKeys = array_keys($temp_colors);
+	sort($colorKeys); // sort color keys in ascending order
+	foreach ($colorKeys as $i => $colorKey) {
+		if ($temperature <= $colorKey) {
+			return $temp_colors[$colorKey]['invert'];
+		}
+		// if temperature is higher than the highest color key, return the highest color
+		if ($i === count($colorKeys) - 1) {
+			return $temp_colors[$colorKeys[$i]]['invert'];
+		}
+	}
+}
+
 function current_weather_block_render() {
 		$options = get_option( 'wunderground_pws_data' );
 
@@ -602,13 +643,47 @@ function current_weather_block_render() {
 		$station_id   = get_option( 'wu_pws_station_id' );
 
 		// determining background colors
-		if ( $heatIndex <= 50 ) {
-			$temp_color = 'blue';
-		} elseif ( $heatIndex <= 70 ) {
-			$temp_color = 'green';
-		} else {
-			$temp_color = 'red';
-		}
+		//legend: https://www.esri.com/arcgis-blog/wp-content/uploads/2022/04/1_NDFD_LegendFinal1-scaled.jpg
+		$temp_colors = array(
+			-60 => array('color' => '#e4efff', 'text' => '#222222', 'invert' => 0, ),
+			-55 => array('color' => '#dbe9fb', 'text' => '#222222', 'invert' => 0, ),
+			-50 => array('color' => '#d3e2f7', 'text' => '#222222', 'invert' => 0, ),
+			-45 => array('color' => '#cbdaf3', 'text' => '#222222', 'invert' => 0, ),
+			-40 => array('color' => '#c0d4ed', 'text' => '#222222', 'invert' => 0, ),
+			-35 => array('color' => '#b8cdea', 'text' => '#222222', 'invert' => 0, ),
+			-30 => array('color' => '#b0c6e6', 'text' => '#222222', 'invert' => 0, ),
+			-25 => array('color' => '#a8bfe3', 'text' => '#222222', 'invert' => 0, ),
+			-20 => array('color' => '#9db8de', 'text' => '#222222', 'invert' => 0, ),
+			-15 => array('color' => '#93b1d6', 'text' => '#222222', 'invert' => 0, ),
+			-10 => array('color' => '#8aa5ce', 'text' => '#222222', 'invert' => 0, ),
+			-5  => array('color' => '#809bc4', 'text' => '#222222', 'invert' => 0, ),
+			0   => array('color' => '#7691b9', 'text' => '#222222', 'invert' => 0, ),
+			5   => array('color' => '#617ba7', 'text' => '#222222', 'invert' => 0, ),
+			10  => array('color' => '#57719d', 'text' => '#ffffff', 'invert' => 1, ),
+			15  => array('color' => '#4d6691', 'text' => '#ffffff', 'invert' => 1, ),
+			20  => array('color' => '#415c87', 'text' => '#ffffff', 'invert' => 1, ),
+			25  => array('color' => '#39517e', 'text' => '#ffffff', 'invert' => 1, ),
+			30  => array('color' => '#2f4774', 'text' => '#ffffff', 'invert' => 1, ),
+			35  => array('color' => '#25436f', 'text' => '#ffffff', 'invert' => 1, ),
+			40  => array('color' => '#264f77', 'text' => '#ffffff', 'invert' => 1, ),
+			45  => array('color' => '#275b80', 'text' => '#ffffff', 'invert' => 1, ),
+			50  => array('color' => '#276789', 'text' => '#ffffff', 'invert' => 1, ),
+			55  => array('color' => '#277593', 'text' => '#ffffff', 'invert' => 1, ),
+			60  => array('color' => '#438090', 'text' => '#222222', 'invert' => 0, ),
+			65  => array('color' => '#658c89', 'text' => '#222222', 'invert' => 0, ),
+			70  => array('color' => '#879b84', 'text' => '#222222', 'invert' => 0, ),
+			75  => array('color' => '#aca87d', 'text' => '#222222', 'invert' => 0, ),
+			80  => array('color' => '#c3ab75', 'text' => '#222222', 'invert' => 0, ),
+			85  => array('color' => '#c49b61', 'text' => '#222222', 'invert' => 0, ),
+			90  => array('color' => '#c18b56', 'text' => '#222222', 'invert' => 0, ),
+			95  => array('color' => '#be6f4c', 'text' => '#222222', 'invert' => 0, ),
+			100 => array('color' => '#af4d4c', 'text' => '#ffffff', 'invert' => 1, ),
+			105 => array('color' => '#9f294d', 'text' => '#ffffff', 'invert' => 1, ),
+			110 => array('color' => '#87203e', 'text' => '#ffffff', 'invert' => 1, ),
+			115 => array('color' => '#6e1532', 'text' => '#ffffff', 'invert' => 1, ),
+			120 => array('color' => '#570b25', 'text' => '#ffffff', 'invert' => 1, ),
+		 	150 => array('color' => '#3d0216', 'text' => '#ffffff', 'invert' => 1, ),
+		);
 
 		if ( $humidity <= 30 ) {
 			$humidity_color = 'yellow';
@@ -670,10 +745,10 @@ function current_weather_block_render() {
 		$output              = "<div class='weather-block-header'><h4>Current weather conditions from <a href='https://www.wunderground.com/dashboard/pws/$station_id' target='_blank'>$station_id</a></h4><p><em>Last updated: $obsTimeLocal</em></p></div>";
 		$output             .= "<div class='weather-block'>";
 		$output             .= '<div class="top-line">';
-				$output     .= '<div class="temp bordered-grid-item ' . $temp_color . '">';
+				$output     .= '<div class="temp bordered-grid-item" style="background-color: ' . getTemperatureColor($heatIndex, $temp_colors) . '; color: ' . getTextColor($heatIndex, $temp_colors) . '">';
 					$output .= '<div class="main">' . $heatIndex . '&deg;F<span class="label">Heat Index</span></div>';
 					$output .= '<div class="sub"><div class="actual">' . $temp . '&deg;F<span class="label">Actual Temp</span></div><div class="wind-chill">' . $windChill . '&deg;F<span class="label">Wind Chill</span></div></div>';
-				$output     .= '<img src="/wp-content/uploads/wu-pws/tempAvgs-sparkline.png" /></div>';
+				$output     .= '<img src="/wp-content/uploads/wu-pws/tempAvgs-sparkline.png" style="filter: invert('. invertSparkline($heatIndex, $temp_colors) .')"/></div>';
 				$output     .= '<div class="humidity bordered-grid-item ' . $humidity_color . '"><div class="main">' . $humidity . '%<span class="label">Humidity</span></div><img src="/wp-content/uploads/wu-pws/humidityAvgs-sparkline.png" /></div>';
 			$output         .= '</div>';
 			$output         .= '<div class="uv bordered-grid-item ' . $uv_color . '">';
