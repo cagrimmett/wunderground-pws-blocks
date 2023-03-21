@@ -4,7 +4,9 @@ Fetches weather data from Wunderground for a personal weather station and output
 
 Here is how it looks on the frontend:
 
-![v 0.2.0 desktop version](img/v0-2-0.png) 
+![v 0.3.0 desktop version](img/v0-3-0.png) 
+
+![v 0.3.0 mobile version](img/v0-3-0-mobile.png)
 
 ## Installing
 - Download this repo as a zip, then upload it to your WordPress Plugins area, install, and activate.
@@ -18,5 +20,6 @@ Block name: __Wunderground PWS Current Weather__
 Clone this repo, then run `npm install`. Make changes. Run `npm run build`.
 
 ## Changelog
+- 2023-03-20 - 0.3.0 beta version with mobile responsivness and new color scheme.
 - 2023-03-16 - 0.2.0 beta version with design and sparklines. No mobile version.
 - 2023-03-05 - 0.1.0 Initial working version. No frills.

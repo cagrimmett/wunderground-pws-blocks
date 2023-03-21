@@ -390,6 +390,11 @@ function wu_pws_settings_page() {
 		update_option( 'wu_pws_api_key', $api_key );
 		update_option( 'wu_pws_station_id', $station_id );
 
+		// run all of the hooks to update the data
+		do_action( 'wu_pws_daily_hook' );
+		do_action( 'wu_pws_hourly_hook' );
+		do_action( 'wu_pws_current_hook' );
+
 		// Display success message
 		echo '<div class="notice notice-success is-dismissible">';
 		echo '<p>Settings saved successfully.</p>';
