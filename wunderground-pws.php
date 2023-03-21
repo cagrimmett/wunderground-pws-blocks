@@ -3,7 +3,7 @@
  * Plugin Name: Wunderground PWS
  * Plugin URI: http://www.cagrimmett.com/
  * Description: Fetches weather data from Wunderground for a personal weather station and displays it in Gutenberg blocks.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: cagrimmett
  * Author URI: https://cagrimmett.com
  * License:           GPL v2 or later
